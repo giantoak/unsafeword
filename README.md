@@ -28,5 +28,26 @@ websites. (This could be generalized to more checks and analyses, but let's keep
 
 
 ## Current sources of Porn / Malware listings
-* Spamhaus?
-* SURBL?
+### Malware, spam, etc.
+* [Spamhaus](https://www.spamhaus.org/)?
+* [SURBL](http://www.surbl.org/)?
+* [Spamdex](http://www.spamdex.co.uk/)
+* [jwSpamSpy](http://joewein.net/bl-log/bl-log.htm)
+* [URLBlacklist.com](http://urlblacklist.com/) (should pay a fee)
+* [Shalla's blacklists](http://www.shallalist.de/) (should sign a contract?)
+* [MESD Blacklists](http://www.squidguard.org/blacklists.html)
+* [MalwareDomains.com](http://www.malwaredomains.com/)
+
+### Porn site aggregators
+* gotblop.com
+* iwantporn.net
+* joespornlist.com
+* mypornbible.com
+* sexpornlist.com
+* sexpornlist.net
+* tblop.com
+* theporndude.com
+* thepornlist.com
+* thesafeporn.com
+* toppornsites.com
+* zwei.in
