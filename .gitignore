@@ -138,3 +138,5 @@ docs/_build/
 # PyBuilder
 target/
 
+# List of porn sites, raw black lists
+porn_lists/
