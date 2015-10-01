@@ -52,7 +52,9 @@ def explain_raw():
 
 @app.route('/raw/<path:raw_text>')
 def check_raw_ad(raw_text):
-    return jsonify(get_match_dict(raw_text))
+
+    return jsonify({'identifier': {'raw': raw_text},
+                    'matches': get_match_dict(raw_text)})
 
 
 @app.route('/isi')
@@ -81,7 +83,8 @@ def check_isi_ad(isi_uri):
 
     match_dict = get_match_dict(text)
     match_dict['uri'] = isi_uri
-    return jsonify(match_dict)
+    return jsonify({'identifier': {'uri': isi_uri},
+                    'matches': get_match_dict(text)})
 
 if __name__ == '__main__':
     app.run()
