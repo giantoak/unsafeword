@@ -3,7 +3,26 @@
 A minimal program for checking MEMEX advertisements for mentions of one of a number of known spam / porn / malware 
 websites. (This could be generalized to more checks and analyses, but let's keep it simple for everyone's sake.)
  
-## Design
+## Current Implementation
+
+At present, Unsafeword runs as a Flask app with two endpoints:
+* `isi/[uri]` takes a URI in ISI's Elasticsearch database (generally a complete URL), queries the DB to get back the 
+text associaed with the add, and parses and returns any located spam entries.
+* `raw/[text]` takes a string and parses and returns any located spam entries.
+
+Output is formatted as a JSON. The basic structure is:
+```
+{
+  'identifier': [Dictionary of identifiers fed to Unsafeword]
+  'matches': { 'spam_flag': [True or False],
+               [spam/porn url in ad]: [blacklists on which the spam/porn url appears],
+               [spam/porn url in ad]: [blacklists on which the spam/porn url appears],
+               ...
+             }
+}
+```
+
+## Designing for the future...
 **This may change.** At present, the plan is to:
 
 ### Get historic data
@@ -33,7 +52,7 @@ websites. (This could be generalized to more checks and analyses, but let's keep
 * [SURBL](http://www.surbl.org/)?
 * [Spamdex](http://www.spamdex.co.uk/)
 * [jwSpamSpy](http://joewein.net/bl-log/bl-log.htm)
-* [URLBlacklist.com](http://urlblacklist.com/) (should pay a fee)
+* [URLBlacklist.com](http://urlblacklist.com/) (should pay a fee, as such not yet incorporated)
 * [Shalla's blacklists](http://www.shallalist.de/) (should sign a contract?)
 * [MESD Blacklists](http://www.squidguard.org/blacklists.html)
 * [MalwareDomains.com](http://www.malwaredomains.com/)
