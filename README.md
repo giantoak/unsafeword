@@ -70,3 +70,7 @@ Output is formatted as a JSON. The basic structure is:
 * thesafeporn.com
 * toppornsites.com
 * zwei.in
+
+
+## Things to do before taking this repo public:
+This repository **includes passwords for MEMEX elasticsearch endpoints.** Those should be stripped out.
