@@ -4,5 +4,7 @@
 # in `lib/` subdirectory.
 #
 # Note: The `lib` directory is added to `sys.path` by `appengine_config.py`.
+beautifulsoup4
+elasticsearch-py
 Flask==0.10.1
-elasticsearch
+lxml
