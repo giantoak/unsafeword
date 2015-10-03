@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 from elasticsearch import Elasticsearch
 from flask import Flask
 from flask import jsonify
@@ -7,6 +8,9 @@ app = Flask(__name__)
 
 bad_dict = pickle.load(open('all_urls.pkl', 'rb'))
 isi_es = Elasticsearch(['https://darpamemex:darpamemex@esc.memexproxy.com/dig-latest/WebPage/'], verify_certs=False)
+cdr_es = Elasticsearch(['https://memex:3vYAZ8bSztbxmznvhD4C@els.istresearch.com:19200/memex-domains/'],
+                       verify_certs=False)
+
 sub_expr = r'(www\.)|(https?://)'
 
 
@@ -41,25 +45,65 @@ def get_match_dict(raw_text):
     return match_dict
 
 
+def get_match_dict_from_es_query(es, query_str, text_fields):
+    """
+    Generic wrapper for getting matches on text stored in an Elasticsearch DB
+    :param es: the elasticsearch connection to use
+    :param query_str: the query string for the entry
+    :param text_fields: The fields of the entry that contain text
+    :return: A match dict for the specified entry
+    """
+    if not es.search_exists(q=query_str):
+        return {'spam_flag': False}
+
+    res = es.search(q=query_str, fields=text_fields)
+
+    text = u''
+    for key in text_fields:
+        try:
+            text += res['hits']['hits'][0]['fields'][key][0].lower().strip()
+            text += ' '
+        except (IndexError, AttributeError):
+            # skip if no title or body
+            pass
+
+    text = text.strip()
+
+    bs = BeautifulSoup(text, 'lxml')
+    if bs.get_text() != text:
+        text = (bs.get_text()+' '+' '.join(x['href'] for x in bs.find_all('a'))).strip()
+
+    return get_match_dict(text)
+
+
 @app.route("/")
 def confirm_on():
+    """ Debug test """
     return "The server's up."
 
 
 @app.route('/raw')
 def explain_raw():
-    return "This app takes a string of ad text that needs to be evaluated: raw/[ad text]"
+    return "This app takes a string of ad text that needs to be evaluated:" \
+           "<br>raw/<em>&lt;ad text&gt;</em>"
+
 
 @app.route('/raw/<path:raw_text>')
 def check_raw_ad(raw_text):
-
+    """
+    Check raw ad text for spam terms
+    :param raw_text:
+    :return:
+    """
     return jsonify({'identifier': {'raw': raw_text},
                     'matches': get_match_dict(raw_text)})
 
 
 @app.route('/isi')
 def explain_isi():
-    return "This app takes a uri field for ISI's Elasticsearch endpoint: isi/[uri]"
+    return "This app takes a uri field for ISI's Elasticsearch endpoint:" \
+           "<br>isi/<em>&lt;uri&rt;</em>"
+
 
 @app.route('/isi/<path:isi_uri>')
 def check_isi_ad(isi_uri):
@@ -68,23 +112,29 @@ def check_isi_ad(isi_uri):
     :param isi_uri: The URI in the ISI Elasticsearch database
     :return unicode: json dictionary containing the URI, a spam_flag bool, and any of the spam urls
     """
-    text_fields = ['hasTitlePart.text', 'hasBodyPart.text']
-
-    res = isi_es.search(q='uri:"{}"'.format(isi_uri), fields=text_fields)
-
-    text = u''
-    for key in text_fields:
-        try:
-            text += res['hits']['hits'][0]['fields'][key].lower().strip()
-            text += ' '
-        except (IndexError, AttributeError):
-            # skip if no title or body
-            pass
-
-    match_dict = get_match_dict(text)
-    match_dict['uri'] = isi_uri
     return jsonify({'identifier': {'uri': isi_uri},
-                    'matches': get_match_dict(text)})
+                    'matches': get_match_dict_from_es_query(isi_es,
+                                                            'uri:"{}"'.format(isi_uri),
+                                                            ['hasTitlePart.text', 'hasBodyPart.text'])})
+
+@app.route('/cdr')
+def explain_cdr():
+    return "This app takes a year, month, domain, and url field for the CDR's Elasticsearch endpoint:" \
+           "<br>cdr:/<em>&lt;url&rt;</em>"
+
+
+@app.route('/cdr/<path:cdr_url>')
+def check_cdr_ad(cdr_url):
+    """
+    Take a CDR URL, look up the corresponding ad text, and return a dict of spam URLs.
+    :param cdr_url: The URL in the CDR
+    :return unicode: json dictionary containing the URI, a spam_flag bool, and any of the spam urls
+    """
+    return jsonify({'identifier': {'url': cdr_url},
+                    'matches': get_match_dict_from_es_query(cdr_es,
+                                                            'url:"{}"'.format(cdr_url),
+                                                            ['title', 'raw_content', 'website'])})
+
 
 if __name__ == '__main__':
     app.run()
