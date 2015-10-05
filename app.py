@@ -133,7 +133,7 @@ def check_cdr_ad(cdr_url):
     return jsonify({'identifier': {'url': cdr_url},
                     'matches': get_match_dict_from_es_query(cdr_es,
                                                             'url:"{}"'.format(cdr_url),
-                                                            ['title', 'raw_content', 'website'])})
+                                                            ['raw_content', 'crawl_data.title', 'crawl_data.website'])})
 
 
 if __name__ == '__main__':
