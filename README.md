@@ -52,8 +52,9 @@ Output is formatted as a JSON. The basic structure is:
 * [SURBL](http://www.surbl.org/)?
 * [Spamdex](http://www.spamdex.co.uk/)
 * [jwSpamSpy](http://joewein.net/bl-log/bl-log.htm)
-* [URLBlacklist.com](http://urlblacklist.com/) (should pay a fee, as such not yet incorporated)
-* [Shalla's blacklists](http://www.shallalist.de/) (should sign a contract?)
+* [URLBlacklist.com](http://urlblacklist.com/) (This list can be downloaded *once* for free; for future downloads, 
+we'll need to pay a token fee.)
+* [Shalla's blacklists](http://www.shallalist.de/) (Commercial usage requires a signed contract)
 * [MESD Blacklists](http://www.squidguard.org/blacklists.html)
 * [MalwareDomains.com](http://www.malwaredomains.com/)
 

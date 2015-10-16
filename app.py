@@ -14,6 +14,16 @@ cdr_es = Elasticsearch(['https://memex:3vYAZ8bSztbxmznvhD4C@els.istresearch.com:
 sub_expr = r'(www\.)|(https?://)'
 
 
+def get_cdr_exact_url_filter_dsl(url):
+    """
+    Take a url, and return a dict for use with Query DSL that will match it exactly.
+    This function primarily exists as a reference:
+    The lucene query "q=url:<url>" will get the job done as well.
+    :param str url: the url to match
+    :return dict: A dictionary compatible with Elasticsearch's Query DSL
+    """
+    return {"query": {"filtered": {"filter": {"term": {"url.exact": str(url)}}}}}
+
 def clean_entry(raw_text):
     """
     Take a url, return root forms of it.
